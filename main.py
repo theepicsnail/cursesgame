@@ -1,5 +1,7 @@
 import math
 import curses, curses.wrapper
+from collections import defaultdict
+
 curses.initscr()
 curses.start_color()
 pairs = []
@@ -18,6 +20,23 @@ class Player:
     def __init__(self):
         self.row = 15
         self.col = 15
+        self.inventory = defaultdict(lambda: 0)
+
+    def pickup(self, item):
+        """Adds an item to player's inventory."""
+        self.inventory[item] += 1
+
+    def drop(self, item):
+        if self.inventory[item] <= 0:
+            raise ItemNotInInventory
+        else:
+            self.inventory[item] -= 1
+
+    def get_inventory(self):
+        itemlist = []
+        for item in self.inventory:
+            itemlist.append(item.__unicode__())
+        return itemlist
 
 class Item(object):
     character = ' '
@@ -53,7 +72,11 @@ class Diamond(Item):
     color = color(curses.COLOR_CYAN) | curses.A_BOLD
     def on_collision(self, player, world):
         del world[(player.row, player.col)] # Remove the diamond from the map
+        player.pickup(self)
         return True
+
+    def __unicode__(self):
+        return "A shiny, shiny diamond about the size of your head."
 
 def run():
     screen = curses.newwin(0,0,0,0)
@@ -117,7 +140,8 @@ def run():
                     window.addch(row-top, col-left, char, attr)
                 except:pass
         window.addch(player.row-top, player.col-left, '@', color(curses.COLOR_YELLOW) | curses.A_BOLD)
-        status.addstr(1,1, "Pos: (%s,%s)" % (player.row, player.col))
+        status.addstr(1,1, "Pos: {},{}".format(player.row, player.col))
+        status.addstr(2,1, "Inventory: {}".format(player.get_inventory()))
         status.refresh()
 
         #handle input
