@@ -36,16 +36,16 @@ class Player:
         else:
             self.inventory[item] -= 1
 
-    def get_inventory(self):
-        itemlist = []
-        for item in self.inventory:
-            itemlist.append(item.__unicode__())
-        return itemlist
-
 class Cell(object):
     """ Cells are the basic unit of the world map
     All items on the map that aren't background are
     cells. Cells are cells, walls are cells, etc.."""
+
+    def __hash__(self):
+        return hash(type(self))
+
+    def __eq__(self, other):
+        return type(self) == type(other)
 
     character = ' '
     color = color()
@@ -86,6 +86,9 @@ class Diamond(Cell):
     def __unicode__(self):
         return "A shiny, shiny diamond about the size of your head."
 
+class RedDiamond(Diamond):
+    color = color(curses.COLOR_RED)
+
 def run():
     screen = curses.newwin(0,0,0,0)
     status = screen.subwin(4,0,0,0)  # rows:4, cols:auto, top:0, left:0
@@ -115,6 +118,11 @@ def run():
     world[(20,15)] = Floor() # Poke a hole for a door
 
     world[(90,90)] = Diamond()
+    world[(25,25)] = Diamond()
+    world[(25,26)] = Diamond()
+    world[(25,27)] = Diamond()
+    world[(25,28)] = Diamond()
+    world[(25,29)] = RedDiamond()
 
     for row in xrange(0,world_height):
         for col in xrange(int(math.sin(row/5.0)*3+50), int(math.sin(row/7.0)*4 + 60)):
@@ -149,7 +157,10 @@ def run():
                 except:pass
         window.addch(player.row-top, player.col-left, '@', color(curses.COLOR_YELLOW) | curses.A_BOLD)
         status.addstr(1,1, "Pos: {},{}".format(player.row, player.col))
-        status.addstr(2,1, "Inventory: {}".format(player.get_inventory()))
+
+        for idx, (item, count) in enumerate(player.inventory.items()):
+            status.addstr(2,1+4*idx, item.character.encode('utf-8'), item.color)
+            status.addstr("{:<3}".format(count))
         status.refresh()
 
         #handle input
