@@ -16,8 +16,8 @@ def color(fg=curses.COLOR_WHITE, bg=curses.COLOR_BLACK):
 
 class Player:
     def __init__(self):
-        self.row = 5
-        self.col = 5
+        self.row = 15
+        self.col = 15
 
 class Item(object):
     character = ' '
@@ -60,7 +60,7 @@ def run():
         world[(i,20)] = Brick()
         world[(10,i)] = Brick()
         world[(20,i)] = Brick()
-    world[(10,15)] = Floor() # Poke a hole for a door
+    world[(20,15)] = Floor() # Poke a hole for a door
 
     for row in xrange(0,height):
         for col in xrange(int(math.sin(row/5.0)*3+50), int(math.sin(row/7.0)*4 + 60)):
