@@ -49,9 +49,10 @@ def run():
     window.addstr(1,0,"Use arrow keys to move")
     window.addstr(3,0,"Press any key to start")
     ch = window.getch()
-
-    left = 0
-    top = 0
+    world_height = 100
+    world_width = 100
+    left = 10
+    top = 10
     height, width = window.getmaxyx()
     player = Player()
     world = {} # Map of (row, col) to item
@@ -66,7 +67,7 @@ def run():
         world[(20,i)] = Brick()
     world[(20,15)] = Floor() # Poke a hole for a door
 
-    for row in xrange(0,height):
+    for row in xrange(0,world_height):
         for col in xrange(int(math.sin(row/5.0)*3+50), int(math.sin(row/7.0)*4 + 60)):
             world[(row,col)] = Water()
 
@@ -77,9 +78,16 @@ def run():
         world[(73, col)] = Bridge()
 
     while ch != 27:
+        window.erase()
+        top = max(0, player.row - min(world_height, height)/2)
+        left = max(0, player.col - min(world_width, width)/2)
         #draw the screen
-        for col in xrange(left, left+width):
-            for row in xrange(top, top+height):
+        for row in xrange(top, top+height):
+            if row >= world_height:
+                break
+            for col in xrange(left, left+width):
+                if col >= world_width:
+                    break
                 try:
                     if (row,col) in world:
                         char = world[(row,col)].character
@@ -88,10 +96,10 @@ def run():
                         char = 'w'
                         attr = color(curses.COLOR_GREEN)
 
-                    window.addch(row, col, char, attr)
+                    window.addch(row-top, col-left, char, attr)
                 except:pass
-        window.addch(player.row, player.col, '@', color(curses.COLOR_YELLOW) | curses.A_BOLD)
-        window.addstr(0,0, str(ch)+" ")
+        window.addch(player.row-top, player.col-left, '@', color(curses.COLOR_YELLOW) | curses.A_BOLD)
+        window.addstr(0,0, " ".join(map(str, [ch, player.row, player.col])))
 
         #handle input
         ch = window.getch()
@@ -110,8 +118,8 @@ def run():
         # out of bounds
         if next_loc[0] < 0 or\
             next_loc[1] < 0 or\
-            next_loc[0] >= height or\
-            next_loc[1] >= width:
+            next_loc[0] >= world_height or\
+            next_loc[1] >= world_width:
             continue
         if next_loc in world:
             if not world[next_loc].passable:
