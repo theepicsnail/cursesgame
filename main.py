@@ -56,7 +56,10 @@ class Diamond(Item):
         return True
 
 def run():
-    window = curses.newwin(0,0,0,0)
+    screen = curses.newwin(0,0,0,0)
+    status = screen.subwin(4,0,0,0)  # rows:4, cols:auto, top:0, left:0
+    status.border(0,0,0,0,0,0,0,0)
+    window = screen.subwin(0,0,4,0) # rows:auto, cols: auto, top:4, left:0
     window.keypad(1)
     window.addstr(0,0,"Press escape to quit")
     window.addstr(1,0,"Use arrow keys to move")
@@ -114,7 +117,8 @@ def run():
                     window.addch(row-top, col-left, char, attr)
                 except:pass
         window.addch(player.row-top, player.col-left, '@', color(curses.COLOR_YELLOW) | curses.A_BOLD)
-        window.addstr(0,0, " ".join(map(str, [ch, player.row, player.col])))
+        status.addstr(1,1, "Pos: (%s,%s)" % (player.row, player.col))
+        status.refresh()
 
         #handle input
         ch = window.getch()
