@@ -38,7 +38,11 @@ class Player:
             itemlist.append(item.__unicode__())
         return itemlist
 
-class Item(object):
+class Cell(object):
+    """ Cells are the basic unit of the world map
+    All items on the map that aren't background are
+    cells. Cells are cells, walls are cells, etc.."""
+
     character = ' '
     color = color()
     passable = True
@@ -49,25 +53,25 @@ class Item(object):
         If false is returned, the player will not"""
         return self.passable
 
-class Brick(Item):
+class Brick(Cell):
     character = '#'
     color = color(curses.COLOR_RED)
     passable = False
 
-class Floor(Item):
+class Floor(Cell):
     character = ' '
     color = color()
 
-class Water(Item):
+class Water(Cell):
     character = '~'
     color = color(curses.COLOR_BLUE)
     passable = False
 
-class Bridge(Item):
+class Bridge(Cell):
     character = '='
     color = color(curses.COLOR_YELLOW)
 
-class Diamond(Item):
+class Diamond(Cell):
     character = curses.ACS_DIAMOND
     color = color(curses.COLOR_CYAN) | curses.A_BOLD
     def on_collision(self, player, world):
