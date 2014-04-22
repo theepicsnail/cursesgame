@@ -1,3 +1,4 @@
+import math
 import curses, curses.wrapper
 curses.initscr()
 curses.start_color()
@@ -32,6 +33,11 @@ class Floor(Item):
     character = ' '
     color = color()
 
+class Water(Item):
+    character = '~'
+    color = color(curses.COLOR_BLUE)
+    passable = False
+
 def run():
     window = curses.newwin(0,0,0,0)
     window.keypad(1)
@@ -55,6 +61,10 @@ def run():
         world[(10,i)] = Brick()
         world[(20,i)] = Brick()
     world[(10,15)] = Floor() # Poke a hole for a door
+
+    for row in xrange(0,height):
+        for col in xrange(int(math.sin(row/5.0)*3+50), int(math.sin(row/7.0)*4 + 60)):
+            world[(row,col)] = Water()
 
     while ch != 27:
         #draw the screen
