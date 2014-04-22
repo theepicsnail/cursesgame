@@ -23,6 +23,12 @@ class Item(object):
     character = ' '
     color = color()
     passable = True
+    def on_collision(self, player, world):
+        """ Handle collision with this item
+        If true is returned, the player will enter
+        the items location.
+        If false is returned, the player will not"""
+        return self.passable
 
 class Brick(Item):
     character = '#'
@@ -45,6 +51,9 @@ class Bridge(Item):
 class Diamond(Item):
     character = curses.ACS_DIAMOND
     color = color(curses.COLOR_CYAN) | curses.A_BOLD
+    def on_collision(self, player, world):
+        del world[(player.row, player.col)] # Remove the diamond from the map
+        return True
 
 def run():
     window = curses.newwin(0,0,0,0)
@@ -128,10 +137,13 @@ def run():
             next_loc[1] >= world_width:
             continue
         if next_loc in world:
-            if not world[next_loc].passable:
+            old_loc = (player.row,player.col)
+            player.row, player.col = next_loc
+            if not world[next_loc].on_collision(player, world):
+                player.row, player.col = old_loc
                 continue
-        player.row = next_loc[0]
-        player.col = next_loc[1]
+
+        player.row, player.col = next_loc
 
 def main(screen):
     try:
