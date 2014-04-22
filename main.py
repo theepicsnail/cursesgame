@@ -67,7 +67,7 @@ def run():
 
                     window.addch(row, col, char, attr)
                 except:pass
-        window.addch(player.row, player.col, '@', color(curses.COLOR_YELLOW))
+        window.addch(player.row, player.col, '@', color(curses.COLOR_YELLOW) | curses.A_BOLD)
         window.addstr(0,0, str(ch)+" ")
 
         #handle input
