@@ -38,6 +38,10 @@ class Water(Item):
     color = color(curses.COLOR_BLUE)
     passable = False
 
+class Bridge(Item):
+    character = '='
+    color = color(curses.COLOR_YELLOW)
+
 def run():
     window = curses.newwin(0,0,0,0)
     window.keypad(1)
@@ -65,6 +69,12 @@ def run():
     for row in xrange(0,height):
         for col in xrange(int(math.sin(row/5.0)*3+50), int(math.sin(row/7.0)*4 + 60)):
             world[(row,col)] = Water()
+
+    for col in xrange(50,58):
+        world[(36, col)] = Bridge()
+        world[(37, col)] = Bridge()
+        world[(72, col)] = Bridge()
+        world[(73, col)] = Bridge()
 
     while ch != 27:
         #draw the screen
