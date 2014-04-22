@@ -4,6 +4,7 @@ from collections import defaultdict
 
 curses.initscr()
 curses.start_color()
+curses.curs_set(0)
 pairs = []
 def color(fg=curses.COLOR_WHITE, bg=curses.COLOR_BLACK):
     key = (fg, bg)
