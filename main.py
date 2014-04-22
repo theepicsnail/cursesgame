@@ -21,10 +21,14 @@ class Player:
 def run():
     window = curses.newwin(0,0,0,0)
     window.keypad(1)
+    window.addstr(0,0,"Press escape to quit")
+    window.addstr(1,0,"Use arrow keys to move")
+    window.addstr(3,0,"Press any key to start")
+    ch = window.getch()
+
     left = 0
     top = 0
     height, width = window.getmaxyx()
-    ch = 0
     player = Player()
     while ch != 27:
         #draw the screen
