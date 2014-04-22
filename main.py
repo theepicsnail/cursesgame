@@ -21,10 +21,13 @@ class Player:
 class Item(object):
     character = ' '
     color = color()
+    passable = True
 
 class Brick(Item):
     character = '#'
     color = color(curses.COLOR_RED)
+    passable = False
+
 class Floor(Item):
     character = ' '
     color = color()
@@ -72,14 +75,29 @@ def run():
 
         #handle input
         ch = window.getch()
+        next_loc = [player.row, player.col]
         if ch == 258: # Down
-            player.row += 1
+            next_loc[0] += 1
         elif ch == 259: # Up
-            player.row -= 1
+            next_loc[0] -= 1
         elif ch == 260: # left
-            player.col -= 1
-        elif ch ==261:
-            player.col += 1
+            next_loc[1] -= 1
+        elif ch ==261: # right
+            next_loc[1] += 1
+        next_loc = tuple(next_loc)
+
+        # collision detection
+        # out of bounds
+        if next_loc[0] < 0 or\
+            next_loc[1] < 0 or\
+            next_loc[0] >= height or\
+            next_loc[1] >= width:
+            continue
+        if next_loc in world:
+            if not world[next_loc].passable:
+                continue
+        player.row = next_loc[0]
+        player.col = next_loc[1]
 
 def main(screen):
     try:
