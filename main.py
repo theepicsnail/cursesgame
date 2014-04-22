@@ -42,6 +42,10 @@ class Bridge(Item):
     character = '='
     color = color(curses.COLOR_YELLOW)
 
+class Diamond(Item):
+    character = curses.ACS_DIAMOND
+    color = color(curses.COLOR_CYAN) | curses.A_BOLD
+
 def run():
     window = curses.newwin(0,0,0,0)
     window.keypad(1)
@@ -66,6 +70,8 @@ def run():
         world[(10,i)] = Brick()
         world[(20,i)] = Brick()
     world[(20,15)] = Floor() # Poke a hole for a door
+
+    world[(90,90)] = Diamond()
 
     for row in xrange(0,world_height):
         for col in xrange(int(math.sin(row/5.0)*3+50), int(math.sin(row/7.0)*4 + 60)):
