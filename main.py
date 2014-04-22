@@ -18,6 +18,17 @@ class Player:
         self.row = 5
         self.col = 5
 
+class Item(object):
+    character = ' '
+    color = color()
+
+class Brick(Item):
+    character = '#'
+    color = color(curses.COLOR_RED)
+class Floor(Item):
+    character = ' '
+    color = color()
+
 def run():
     window = curses.newwin(0,0,0,0)
     window.keypad(1)
@@ -30,12 +41,31 @@ def run():
     top = 0
     height, width = window.getmaxyx()
     player = Player()
+    world = {} # Map of (row, col) to item
+
+    #build a 'house'
+    for i in xrange(10,20):
+        for j in xrange(11,20):
+            world[(i,j)] = Floor()
+        world[(i,10)] = Brick()
+        world[(i,20)] = Brick()
+        world[(10,i)] = Brick()
+        world[(20,i)] = Brick()
+    world[(10,15)] = Floor() # Poke a hole for a door
+
     while ch != 27:
         #draw the screen
         for col in xrange(left, left+width):
             for row in xrange(top, top+height):
                 try:
-                    window.addch(row, col, 'w', color(curses.COLOR_GREEN))
+                    if (row,col) in world:
+                        char = world[(row,col)].character
+                        attr = world[(row,col)].color
+                    else:
+                        char = 'w'
+                        attr = color(curses.COLOR_GREEN)
+
+                    window.addch(row, col, char, attr)
                 except:pass
         window.addch(player.row, player.col, '@', color(curses.COLOR_YELLOW))
         window.addstr(0,0, str(ch)+" ")
