@@ -1,7 +1,10 @@
+# -*- coding: utf-8 -*-
 import math
 import curses, curses.wrapper
 from collections import defaultdict
+import locale
 
+locale.setlocale(locale.LC_ALL,"")
 curses.initscr()
 curses.start_color()
 curses.curs_set(0)
@@ -73,7 +76,7 @@ class Bridge(Cell):
     color = color(curses.COLOR_YELLOW)
 
 class Diamond(Cell):
-    character = curses.ACS_DIAMOND
+    character = u'♦'
     color = color(curses.COLOR_CYAN) | curses.A_BOLD
     def on_collision(self, player, world):
         del world[(player.row, player.col)] # Remove the diamond from the map
@@ -142,7 +145,7 @@ def run():
                         char = 'w'
                         attr = color(curses.COLOR_GREEN)
 
-                    window.addch(row-top, col-left, char, attr)
+                    window.addstr(row-top, col-left, char.encode('utf-8'), attr)
                 except:pass
         window.addch(player.row-top, player.col-left, '@', color(curses.COLOR_YELLOW) | curses.A_BOLD)
         status.addstr(1,1, "Pos: {},{}".format(player.row, player.col))
