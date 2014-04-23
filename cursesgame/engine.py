@@ -5,6 +5,7 @@ from cell import *
 from util import color
 def build_world():
     world = {"height": 100, "width":100}
+    world["default"] = Grass()
     #build a 'house'
     for i in xrange(10, 20):
         for j in xrange(11, 20):
@@ -62,13 +63,12 @@ def run():
                     break
                 try:
                     if (row, col) in world:
-                        char = world[(row, col)].character
-                        attr = world[(row, col)].color
+                        cell = world[(row, col)]
                     else:
-                        char = 'w'
-                        attr = color(curses.COLOR_GREEN)
+                        cell = world["default"]
 
-                    window.addstr(row-top, col-left, char.encode('utf-8'), attr)
+                    window.addstr(row-top, col-left,
+                        cell.character.encode('utf-8'), cell.color)
                 except:pass
         window.addch(player.row-top, player.col-left, '@', color(curses.COLOR_YELLOW) | curses.A_BOLD)
         status.addstr(1, 1, "Pos: {}, {}".format(player.row, player.col))
