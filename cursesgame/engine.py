@@ -3,25 +3,8 @@ import math
 from player import Player
 from cell import *
 from util import color
-
-def run():
-    screen = curses.newwin(0, 0, 0, 0)
-    status = screen.subwin(4, 0, 0, 0)  # rows:4, cols:auto, top:0, left:0
-    status.border(0, 0, 0, 0, 0, 0, 0, 0)
-    window = screen.subwin(0, 0, 4, 0) # rows:auto, cols: auto, top:4, left:0
-    window.keypad(1)
-    window.addstr(0, 0, "Press escape to quit")
-    window.addstr(1, 0, "Use arrow keys to move")
-    window.addstr(3, 0, "Press any key to start")
-    char = window.getch()
-    world_height = 100
-    world_width = 100
-    left = 10
-    top = 10
-    height, width = window.getmaxyx()
-    player = Player(15, 15)
-    world = {} # Map of (row, col) to item
-
+def build_world():
+    world = {"height": 100, "width":100}
     #build a 'house'
     for i in xrange(10, 20):
         for j in xrange(11, 20):
@@ -39,7 +22,7 @@ def run():
     world[(25, 28)] = Diamond()
     world[(25, 29)] = RedDiamond()
 
-    for row in xrange(0, world_height):
+    for row in xrange(0, world["height"]):
         for col in xrange(int(math.sin(row/5.0)*3+50), int(math.sin(row/7.0)*4 + 60)):
             world[(row, col)] = Water()
 
@@ -48,7 +31,24 @@ def run():
         world[(37, col)] = Bridge()
         world[(72, col)] = Bridge()
         world[(73, col)] = Bridge()
+    return world
 
+def run():
+    screen = curses.newwin(0, 0, 0, 0)
+    status = screen.subwin(4, 0, 0, 0)  # rows:4, cols:auto, top:0, left:0
+    status.border(0, 0, 0, 0, 0, 0, 0, 0)
+    window = screen.subwin(0, 0, 4, 0) # rows:auto, cols: auto, top:4, left:0
+    window.keypad(1)
+    window.addstr(0, 0, "Press escape to quit")
+    window.addstr(1, 0, "Use arrow keys to move")
+    window.addstr(3, 0, "Press any key to start")
+    char = window.getch()
+    left = 10
+    top = 10
+    height, width = window.getmaxyx()
+    player = Player(15, 15)
+    world = build_world()
+    world_height, world_width = world['height'], world['width']
     while char != 27:
         window.erase()
         top = max(0, player.row - min(world_height, height)/2)
