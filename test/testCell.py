@@ -18,6 +18,9 @@ class TestCollisions(unittest.TestCase):
         success = world[(0, 0)].on_collision(self.player, world)
         self.assertTrue(success == expected)
 
+    def testGrassIsPassable(self):
+        self.checkPassable(Grass, True)
+
     def testBrickIsNotPassable(self):
         self.checkPassable(Brick, False)
 

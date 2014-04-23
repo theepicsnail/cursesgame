@@ -23,6 +23,10 @@ class Cell(object):
         If false is returned, the player will not"""
         return self.passable
 
+class Grass(Cell):
+    character = 'w'
+    color = color(curses.COLOR_GREEN)
+
 class Brick(Cell):
     character = '#'
     color = color(curses.COLOR_RED)
