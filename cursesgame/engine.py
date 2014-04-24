@@ -34,7 +34,7 @@ def build_world():
         world[(73, col)] = Bridge()
     return world
 
-def Engine:
+class Engine:
     def __init__(self):
         self._buildScreens()
         self._showIntro()
@@ -43,29 +43,29 @@ def Engine:
         self.screen = curses.newwin(0, 0, 0, 0)
 
         # rows:4, cols:auto, top:0, left:0
-        self.status = screen.subwin(4, 0, 0, 0)
+        self.status = self.screen.subwin(4, 0, 0, 0)
         self.status.border(0, 0, 0, 0, 0, 0, 0, 0)
 
         # rows:auto, cols: auto, top:4, left:0
-        self.window = screen.subwin(0, 0, 4, 0)
+        self.window = self.screen.subwin(0, 0, 4, 0)
         self.window.keypad(1)
 
-    def _showIntro():
+    def _showIntro(self):
         self.window.addstr(0, 0, "Press escape to quit")
         self.window.addstr(1, 0, "Use arrow keys to move")
         self.window.addstr(3, 0, "Press any key to start")
         self.window.getch()
 
-    def mainloop():
-        char = window.getch()
+    def mainloop(self,):
+        char = self.window.getch()
         left = 10
         top = 10
-        height, width = window.getmaxyx()
+        height, width = self.window.getmaxyx()
         player = Player(15, 15)
         world = build_world()
         world_height, world_width = world['height'], world['width']
         while char != 27:
-            window.erase()
+            self.window.erase()
             top = max(0, player.row - min(world_height, height)/2)
             left = max(0, player.col - min(world_width, width)/2)
             #draw the screen
@@ -81,19 +81,19 @@ def Engine:
                         else:
                             cell = world["default"]
 
-                        window.addstr(row-top, col-left,
+                        self.window.addstr(row-top, col-left,
                             cell.character.encode('utf-8'), cell.color)
                     except:pass
-            window.addch(player.row-top, player.col-left, '@', color(curses.COLOR_YELLOW) | curses.A_BOLD)
-            status.addstr(1, 1, "Pos: {}, {}".format(player.row, player.col))
+            self.window.addch(player.row-top, player.col-left, '@', color(curses.COLOR_YELLOW) | curses.A_BOLD)
+            self.status.addstr(1, 1, "Pos: {}, {}".format(player.row, player.col))
 
             for idx, (item, count) in enumerate(player.inventory.items()):
-                status.addstr(2, 1+4*idx, item.character.encode('utf-8'), item.color)
-                status.addstr("{:<3}".format(count))
-            status.refresh()
+                self.status.addstr(2, 1+4*idx, item.character.encode('utf-8'), item.color)
+                self.status.addstr("{:<3}".format(count))
+            self.status.refresh()
 
             #handle input
-            char = window.getch()
+            char = self.window.getch()
             next_loc = [player.row, player.col]
             if char == 258: # Down
                 next_loc[0] += 1
