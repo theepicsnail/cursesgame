@@ -58,4 +58,27 @@ class Diamond(Cell):
 class RedDiamond(Diamond):
     color = color(curses.COLOR_RED)
 
+class Door(Cell):
+    key = None # This needs over written by subclasses
+    replacement = None
+
+    def __init__(self):
+        self.character = self.key.character
+        self.color = self.key.color | curses.A_REVERSE
+
+    def enterable_by(self, player):
+        if player.has_a(self.key):
+            return True
+
+    def on_entry(self, player, world):
+        player.drop(self.key)
+        world.remove_cell(player.row, player.col)
+
+class DiamondDoor(Door):
+    key = Diamond()
+    replacement = Floor()
+
+class RedDiamondDoor(Door):
+    key = RedDiamond()
+    replacement = Floor()
 

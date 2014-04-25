@@ -16,3 +16,5 @@ class Player:
         else:
             self.inventory[item] -= 1
 
+    def has_a(self, item):
+        return item in self.inventory
