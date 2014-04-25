@@ -54,7 +54,7 @@ class World:
         self.cells[(31,31)] = wall.duplicate()
         self.cells[(31,32)] = wall.duplicate()
         self.cells[(31,33)] = wall.duplicate()
-
+        self.cells[(25,40)] = PushableBlock()
     def set_cell(self, row, col, val):
         if (row, col) in self.cells:
             raise Exception("(%s, %s) already contains %s" % (

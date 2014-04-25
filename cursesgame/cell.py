@@ -110,3 +110,14 @@ class DiamondDoor(Door):
 class RedDiamondDoor(Door):
     key = RedDiamond(None)
 
+class PushableBlock(Cell):
+    character = 'X'
+    def enterable_by(self, player, world, direction):
+        self.dest = player.row + direction[0]*2,\
+               player.col + direction[1]*2
+        if world.get_cell(*self.dest) == Grass():
+            return True
+    def on_entry(self, player, world):
+        world.remove_cell(player.row, player.col)
+        world.set_cell(self.dest[0], self.dest[1], self)
+
