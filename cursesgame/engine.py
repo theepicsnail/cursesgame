@@ -62,18 +62,17 @@ class Engine:
 
             #handle input
             char = self.window.getch()
-            next_loc = [player.row, player.col]
             if char == 258: # Down
-                next_loc[0] += 1
+                direction = (1, 0)
             elif char == 259: # Up
-                next_loc[0] -= 1
+                direction = (-1, 0)
             elif char == 260: # left
-                next_loc[1] -= 1
+                direction = (0, -1)
             elif char == 261: # right
-                next_loc[1] += 1
+                direction = (0, 1)
             else:
                 continue
-            next_loc = tuple(next_loc)
+            next_loc = (player.row + direction[0], player.col + direction[1])
 
             # collision detection
             # out of bounds
