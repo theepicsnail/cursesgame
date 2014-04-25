@@ -16,14 +16,14 @@ class World:
             self.cells[(i, 20)] = Brick()
             self.cells[(10, i)] = Brick()
             self.cells[(20, i)] = Brick()
-        self.cells[(12, 12)] = Diamond()
-        self.cells[(20, 15)] = DiamondDoor()
+        self.cells[(12, 12)] = Diamond(Floor())
+        self.cells[(20, 15)] = DiamondDoor(Floor())
 
-        self.cells[(25, 29)] = RedDiamond()
-        self.cells[(30,30)] = RedDiamondDoor()
-        self.cells[(30, 31)] = Diamond()
-        self.cells[(30, 32)] = Diamond()
-        self.cells[(30, 33)] = Diamond()
+        self.cells[(25, 29)] = RedDiamond(Grass())
+        self.cells[(30,30)] = RedDiamondDoor(Grass())
+        self.cells[(30, 31)] = Diamond(Grass())
+        self.cells[(30, 32)] = Diamond(Grass())
+        self.cells[(30, 33)] = Diamond(Grass())
 
         for row in xrange(0, self.height):
             for col in xrange(int(math.sin(row/5.0)*3+50), int(math.sin(row/7.0)*4 + 60)):
@@ -32,8 +32,7 @@ class World:
         for col in xrange(50, 58):
             cell = Bridge()
             if col == 54:
-                cell = DiamondDoor()
-                cell.replacement = Bridge()
+                cell = DiamondDoor(cell)
 
             self.cells[(36, col)] = cell
             self.cells[(37, col)] = cell

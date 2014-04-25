@@ -46,8 +46,11 @@ class Bridge(Cell):
 
 class Diamond(Cell):
     character = u'♦'
-    replacement = Floor()
     color = color(curses.COLOR_CYAN) | curses.A_BOLD
+
+    def __init__(self, replacement):
+        self.replacement = replacement
+
     def on_entry(self, player, world):
         world.remove_cell(player.row, player.col)
         world.set_cell(player.row, player.col, self.replacement)
@@ -62,9 +65,9 @@ class RedDiamond(Diamond):
 
 class Door(Cell):
     key = None # This needs over written by subclasses
-    replacement = None
 
-    def __init__(self):
+    def __init__(self, replacement):
+        self.replacement = replacement
         self.character = self.key.character
         self.color = self.key.color | curses.A_REVERSE
 
@@ -78,10 +81,11 @@ class Door(Cell):
         world.set_cell(player.row, player.col, self.replacement)
 
 class DiamondDoor(Door):
-    key = Diamond()
-    replacement = Floor()
+    key = Diamond(None)
+    #Specifically no replacement value
+    # We're using this as a comparison value, if this goes
+    # into the world object, something has gone wrong.
 
 class RedDiamondDoor(Door):
-    key = RedDiamond()
-    replacement = Floor()
+    key = RedDiamond(None)
 
