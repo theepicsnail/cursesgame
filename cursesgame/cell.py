@@ -16,12 +16,11 @@ class Cell(object):
     character = ' '
     color = color()
     passable = True
-    def on_collision(self, player, world):
-        """ Handle collision with this item
-        If true is returned, the player will enter
-        the items location.
-        If false is returned, the player will not"""
+    def enterable_by(self, player):
         return self.passable
+    def on_entry(self, player, world):
+        pass
+
 
 class Grass(Cell):
     character = 'w'
@@ -48,8 +47,8 @@ class Bridge(Cell):
 class Diamond(Cell):
     character = u'♦'
     color = color(curses.COLOR_CYAN) | curses.A_BOLD
-    def on_collision(self, player, world):
-        del world[(player.row, player.col)] # Remove the diamond from the map
+    def on_entry(self, player, world):
+        world.remove_cell(player.row, player.col)
         player.pickup(self)
         return True
 
