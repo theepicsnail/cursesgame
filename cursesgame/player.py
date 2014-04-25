@@ -4,7 +4,7 @@ class Player:
     def __init__(self, row, col):
         self.row = row
         self.col = col
-        self.inventory = defaultdict(lambda: 0)
+        self.inventory = defaultdict(int)
 
     def pickup(self, item):
         """Adds an item to player's inventory."""
