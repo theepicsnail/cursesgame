@@ -46,9 +46,11 @@ class Bridge(Cell):
 
 class Diamond(Cell):
     character = u'♦'
+    replacement = Floor()
     color = color(curses.COLOR_CYAN) | curses.A_BOLD
     def on_entry(self, player, world):
         world.remove_cell(player.row, player.col)
+        world.set_cell(player.row, player.col, self.replacement)
         player.pickup(self)
         return True
 
@@ -73,6 +75,7 @@ class Door(Cell):
     def on_entry(self, player, world):
         player.drop(self.key)
         world.remove_cell(player.row, player.col)
+        world.set_cell(player.row, player.col, self.replacement)
 
 class DiamondDoor(Door):
     key = Diamond()

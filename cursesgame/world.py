@@ -21,21 +21,33 @@ class World:
 
         self.cells[(25, 29)] = RedDiamond()
         self.cells[(30,30)] = RedDiamondDoor()
+        self.cells[(30, 31)] = Diamond()
+        self.cells[(30, 32)] = Diamond()
+        self.cells[(30, 33)] = Diamond()
 
         for row in xrange(0, self.height):
             for col in xrange(int(math.sin(row/5.0)*3+50), int(math.sin(row/7.0)*4 + 60)):
                 self.cells[(row, col)] = Water()
 
         for col in xrange(50, 58):
-            self.cells[(36, col)] = Bridge()
-            self.cells[(37, col)] = Bridge()
-            self.cells[(72, col)] = Bridge()
-            self.cells[(73, col)] = Bridge()
+            cell = Bridge()
+            if col == 54:
+                cell = DiamondDoor()
+                cell.replacement = Bridge()
+
+            self.cells[(36, col)] = cell
+            self.cells[(37, col)] = cell
+            self.cells[(72, col)] = cell
+            self.cells[(73, col)] = cell
 
     def set_cell(self, row, col, val):
         if (row, col) in self.cells:
             raise Exception("(%s, %s) already contains %s" % (
                 row, col, self.get_cell(row,col)))
+
+        if val is None:
+            raise Exception("Can not set cell to None, use remove_cell")
+
         self.cells[(row, col)] = val
 
     def get_cell(self, row, col):
