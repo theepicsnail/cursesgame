@@ -4,6 +4,7 @@ COLOR_RED = "red"
 COLOR_BLUE = "blue"
 COLOR_YELLOW = "yellow"
 COLOR_CYAN = "cyan"
+COLOR_GREEN = "green"
 
 class __Attribute:
     def __init__(self, val):
