@@ -13,7 +13,6 @@ class Engine:
 
         # rows:4, cols:auto, top:0, left:0
         self.status = self.screen.subwin(4, 0, 0, 0)
-        self.status.border(0, 0, 0, 0, 0, 0, 0, 0)
 
         # rows:auto, cols: auto, top:4, left:0
         self.window = self.screen.subwin(0, 0, 4, 0)
@@ -50,9 +49,11 @@ class Engine:
                     except Exception:pass
             self.window.addch(player.row-top, player.col-left, '@',
                     color(curses.COLOR_YELLOW) | curses.A_BOLD)
+            # draw status bar
+            self.status.erase()
+            self.status.border(0, 0, 0, 0, 0, 0, 0, 0)
             self.status.addstr(1, 1, "Pos: {}, {}".format(
                     player.row, player.col))
-
             for idx, (item, count) in enumerate(player.inventory.items()):
                 self.status.addstr(2, 1+4*idx, item.character.encode('utf-8'),
                         item.color)
