@@ -83,7 +83,7 @@ class Engine:
                 continue
 
             cell = world.get_cell(next_loc[0], next_loc[1])
-            if cell.enterable_by(player):
+            if cell.enterable_by(player, world, direction):
                 player.row, player.col = next_loc
                 cell.on_entry(player, world)
 

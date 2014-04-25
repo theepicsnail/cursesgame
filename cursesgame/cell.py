@@ -16,7 +16,7 @@ class Cell(object):
     character = ' '
     color = color()
     passable = True
-    def enterable_by(self, player):
+    def enterable_by(self, player, world, direction):
         return self.passable
     def on_entry(self, player, world):
         pass
@@ -92,7 +92,7 @@ class Door(Cell):
         self.character = self.key.character
         self.color = self.key.color | curses.A_REVERSE
 
-    def enterable_by(self, player):
+    def enterable_by(self, player, world, direction):
         if player.has_a(self.key):
             return True
 
