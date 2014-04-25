@@ -12,9 +12,11 @@ class Player:
 
     def drop(self, item):
         if self.inventory[item] <= 0:
-            raise ItemNotInInventory
+            raise Exception("Item not in inventory")
         else:
             self.inventory[item] -= 1
+            if self.inventory[item] == 0:
+                del self.inventory[item]
 
     def has_a(self, item):
         return item in self.inventory
