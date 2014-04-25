@@ -21,6 +21,27 @@ class Cell(object):
     def on_entry(self, player, world):
         pass
 
+class CellBuilder(Cell):
+    def __eq__(self, other):
+        return False
+
+    def setPassable(self, p):
+        self.passable = p
+        return self
+
+    def setCharacter(self, c):
+        self.character = c
+        return self
+
+    def setColor(self, c):
+        self.color = c
+        return self
+
+    def duplicate(self):
+        return CellBuilder()\
+            .setPassable(self.passable)\
+            .setCharacter(self.character)\
+            .setColor(self.color)
 
 class Grass(Cell):
     character = 'w'
