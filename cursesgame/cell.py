@@ -75,7 +75,7 @@ class Door(Cell):
 
     def on_entry(self, cell, world):
         cell.rem_item(self.key)
-        world.pop_cell(cell.row, cell.col)
+        world.pop_cell(*cell.get_pos())
 
 class DiamondDoor(Door):
     key = Diamond()
