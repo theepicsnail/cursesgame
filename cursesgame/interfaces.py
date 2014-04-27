@@ -44,22 +44,22 @@ class Position(object):
 class Inventory(object):
     def __init__(self):
         super(Inventory,self).__init__()
-        self.inventory = defaultdict(int)
+        self._inventory = defaultdict(int)
 
     def add_item(self, item):
-        self.inventory[item] += 1
+        self._inventory[item] += 1
 
     def rem_item(self, item):
-        if self.inventory[item] <= 0:
+        if self._inventory[item] <= 0:
             raise Exception("Item not in inventory: %s" % item)
 
-        self.inventory[item] -= 1
+        self._inventory[item] -= 1
 
-        if self.inventory[item] <= 0:
-            del self.inventory[item]
+        if self._inventory[item] <= 0:
+            del self._inventory[item]
 
     def has_item(self, item):
-        return item in self.inventory
+        return item in self._inventory
 
     def list_items(self):
-        return self.inventory.iteritems()
+        return self._inventory.iteritems()
