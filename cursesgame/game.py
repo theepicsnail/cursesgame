@@ -6,11 +6,11 @@ curses.initscr()
 curses.start_color()
 curses.curs_set(0)
 
-from engine import Engine
 
 def main(screen):
-    engine = Engine()
     try:
+        from engine import Engine
+        engine = Engine()
         engine.mainloop()
     finally:
         curses.nocbreak()
