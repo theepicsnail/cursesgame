@@ -91,12 +91,13 @@ class PushableBlock(Cell):
     color = color(curses.COLOR_WHITE)
     def enterable_by(self, cell, world, direction):
         if isinstance(cell, Position):
-            self.dest = cell.row + direction[0]*2,\
-                cell.col + direction[1]*2
+            row, col = cell.get_pos()
+            self.dest = row + direction[0]*2,\
+                col + direction[1]*2
             if world.peek_cell(*self.dest).enterable_by(self, world, direction):
                 return True
 
     def on_entry(self, cell, world):
         world.push_cell(self.dest[0], self.dest[1],
-            world.pop_cell(cell.row, cell.col))
+            world.pop_cell(*cell.get_pos()))
 
