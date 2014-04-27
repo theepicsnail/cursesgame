@@ -29,7 +29,8 @@ class Engine:
         top = 10
         height, width = self.window.getmaxyx()
         player = Player(15, 15)
-        world = World()
+        import levels.level1
+        world = levels.level1.Level1()
         while char != 27:
             self.window.erase()
             top = max(0, player.row - height/2)#min(world.height, height)/2)
@@ -42,7 +43,7 @@ class Engine:
                     if col >= world.width:
                         break
                     try:
-                        cell = world.get_cell(row, col)
+                        cell = world.peek_cell(row, col)
                         self.window.addstr(row-top, col-left,
                             cell.character.encode('utf-8'), cell.color)
                     except Exception:pass
@@ -81,7 +82,7 @@ class Engine:
                 next_loc[1] >= world.width:
                 continue
 
-            cell = world.get_cell(next_loc[0], next_loc[1])
+            cell = world.peek_cell(next_loc[0], next_loc[1])
             if cell.enterable_by(player, world, direction):
                 player.row, player.col = next_loc
                 cell.on_entry(player, world)

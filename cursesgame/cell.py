@@ -18,6 +18,7 @@ class Cell(object):
     passable = True
     def enterable_by(self, player, world, direction):
         return self.passable
+
     def on_entry(self, player, world):
         pass
 
@@ -69,13 +70,8 @@ class Diamond(Cell):
     character = u'♦'
     color = color(curses.COLOR_CYAN) | curses.A_BOLD
 
-    def __init__(self, replacement):
-        self.replacement = replacement
-
     def on_entry(self, player, world):
-        world.remove_cell(player.row, player.col)
-        world.set_cell(player.row, player.col, self.replacement)
-        player.pickup(self)
+        player.pickup(world.pop_cell(player.row, player.col))
         return True
 
     def __unicode__(self):
@@ -87,8 +83,7 @@ class RedDiamond(Diamond):
 class Door(Cell):
     key = None # This needs over written by subclasses
 
-    def __init__(self, replacement):
-        self.replacement = replacement
+    def __init__(self):
         self.character = self.key.character
         self.color = self.key.color | curses.A_REVERSE
 
@@ -98,26 +93,25 @@ class Door(Cell):
 
     def on_entry(self, player, world):
         player.drop(self.key)
-        world.remove_cell(player.row, player.col)
-        world.set_cell(player.row, player.col, self.replacement)
+        world.pop_cell(player.row, player.col)
 
 class DiamondDoor(Door):
-    key = Diamond(None)
+    key = Diamond()
     #Specifically no replacement value
     # We're using this as a comparison value, if this goes
     # into the world object, something has gone wrong.
 
 class RedDiamondDoor(Door):
-    key = RedDiamond(None)
+    key = RedDiamond()
 
 class PushableBlock(Cell):
     character = 'X'
     def enterable_by(self, player, world, direction):
         self.dest = player.row + direction[0]*2,\
                player.col + direction[1]*2
-        if world.get_cell(*self.dest) == Grass():
+        if world.push_cell(*self.dest) == Grass():
             return True
     def on_entry(self, player, world):
-        world.remove_cell(player.row, player.col)
-        world.set_cell(self.dest[0], self.dest[1], self)
+        world.push_cell(self.dest[0], self.dest[1],
+            world.pop_cell(player.row, player.col))
 
