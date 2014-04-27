@@ -48,7 +48,7 @@ class Grass(Cell):
     color = color(curses.COLOR_GREEN)
 
 class Brick(Cell):
-    character = '#'
+    character = u'▒'
     color = color(curses.COLOR_RED)
     passable = False
 
@@ -62,7 +62,7 @@ class Water(Cell):
     passable = False
 
 class Bridge(Cell):
-    character = '='
+    character = u'▓'
     color = color(curses.COLOR_YELLOW)
 
 class Diamond(Cell):
