@@ -1,26 +1,7 @@
 # -*- coding: utf-8 -*-
 import curses
 from util import color
-
-class Cell(object):
-    """ Cells are the basic unit of the world map
-    All items on the map that aren't background are
-    cells. Cells are cells, walls are cells, etc.."""
-
-    def __hash__(self):
-        return hash(type(self))
-
-    def __eq__(self, other):
-        return type(self) == type(other)
-
-    character = ' '
-    color = color()
-    passable = True
-    def enterable_by(self, player, world, direction):
-        return self.passable
-
-    def on_entry(self, player, world):
-        pass
+from interfaces import *
 
 class CellBuilder(Cell):
     def __eq__(self, other):
@@ -70,8 +51,9 @@ class Diamond(Cell):
     character = u'♦'
     color = color(curses.COLOR_CYAN) | curses.A_BOLD
 
-    def on_entry(self, player, world):
-        player.pickup(world.pop_cell(player.row, player.col))
+    def on_entry(self, cell, world):
+        if isinstance(cell, Inventory) and isinstance(cell, Position):
+            cell.add_item(world.pop_cell(*cell.get_pos()))
         return True
 
     def __unicode__(self):
@@ -87,13 +69,13 @@ class Door(Cell):
         self.character = self.key.character
         self.color = self.key.color | curses.A_REVERSE
 
-    def enterable_by(self, player, world, direction):
-        if player.has_a(self.key):
-            return True
+    def enterable_by(self, cell, world, direction):
+        if isinstance(cell, Inventory):
+            return cell.has_item(self.key)
 
-    def on_entry(self, player, world):
-        player.drop(self.key)
-        world.pop_cell(player.row, player.col)
+    def on_entry(self, cell, world):
+        cell.rem_item(self.key)
+        world.pop_cell(cell.row, cell.col)
 
 class DiamondDoor(Door):
     key = Diamond()
@@ -106,12 +88,15 @@ class RedDiamondDoor(Door):
 
 class PushableBlock(Cell):
     character = 'X'
-    def enterable_by(self, player, world, direction):
-        self.dest = player.row + direction[0]*2,\
-               player.col + direction[1]*2
-        if world.push_cell(*self.dest) == Grass():
-            return True
-    def on_entry(self, player, world):
+    color = color(curses.COLOR_WHITE)
+    def enterable_by(self, cell, world, direction):
+        if isinstance(cell, Position):
+            self.dest = cell.row + direction[0]*2,\
+                cell.col + direction[1]*2
+            if world.peek_cell(*self.dest).enterable_by(self, world, direction):
+                return True
+
+    def on_entry(self, cell, world):
         world.push_cell(self.dest[0], self.dest[1],
-            world.pop_cell(player.row, player.col))
+            world.pop_cell(cell.row, cell.col))
 

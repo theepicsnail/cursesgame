@@ -54,7 +54,7 @@ class Engine:
             self.status.border(0, 0, 0, 0, 0, 0, 0, 0)
             self.status.addstr(1, 1, "Pos: {}, {}".format(
                     player.row, player.col))
-            for idx, (item, count) in enumerate(player.inventory.items()):
+            for idx, (item, count) in enumerate(player.list_items()):
                 self.status.addstr(2, 1+4*idx, item.character.encode('utf-8'),
                         item.color)
                 self.status.addstr("{:<3}".format(count))
