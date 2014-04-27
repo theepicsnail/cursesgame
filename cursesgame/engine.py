@@ -22,7 +22,6 @@ class Engine:
         self.window.addstr(0, 0, "Press escape to quit")
         self.window.addstr(1, 0, "Use arrow keys to move")
         self.window.addstr(3, 0, "Press any key to start")
-        self.window.getch()
 
     def mainloop(self):
         char = self.window.getch()
@@ -33,8 +32,8 @@ class Engine:
         world = World()
         while char != 27:
             self.window.erase()
-            top = max(0, player.row - min(world.height, height)/2)
-            left = max(0, player.col - min(world.width, width)/2)
+            top = max(0, player.row - height/2)#min(world.height, height)/2)
+            left = max(0, player.col - width/2)# min(world.width, width)/2)
             #draw the screen
             for row in xrange(top, top+height):
                 if row >= world.height:
