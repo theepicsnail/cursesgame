@@ -80,6 +80,7 @@ class Engine:
                     except Exception:pass
 
             # draw side bar
+            self.side.erase()
             side_row = 0
             log_rows = self.side.getmaxyx()[0]
             for line in self.side_buffer[::-1]:
