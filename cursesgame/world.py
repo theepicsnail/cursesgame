@@ -59,6 +59,9 @@ class World(object):
     def south_of(self, obj, count=1):
         return self.relative_to(obj, (count, 0))
     def relative_to(self, obj, offset=(0,0)):
+        if type(obj) == tuple:
+            return (obj[0] + offset[0], obj[1] + offset[1])
+
         if getattr(obj, 'world_pos', None) is None:
             raise Exception("%s does not have a world_pos attribute", obj)
 
