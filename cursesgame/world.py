@@ -4,6 +4,7 @@ from player import Player
 import math
 import util
 import curses # For colors only
+import pubsub
 
 class World(object):
     def __init__(self, width=100, height=100, default=Grass()):
@@ -17,8 +18,8 @@ class World(object):
     def create(self):
         raise NotImplementedError()
 
-
     def push_cell(self, pos, val):
+        pubsub.pub("log", "%s %s" % (pos, val))
         if getattr(val, 'world_pos', None) is not None:
             raise Exception("Cell %s already exists at %s" %(val, val.world_pos))
         assert(val is not None)

@@ -2,6 +2,7 @@ import curses
 from player import Player
 from util import color
 from world import World
+import pubsub
 
 class Engine:
     def __init__(self):
@@ -9,6 +10,8 @@ class Engine:
         self._buildScreens()
         self._showIntro()
         self.player = Player()
+        pubsub.sub("log", self.log_message)
+
 
     def _buildScreens(self):
         self.screen = curses.newwin(0, 0, 0, 0)
@@ -33,7 +36,7 @@ class Engine:
         # |   |               |
         # +---+---------------+
         #
-        w = 20
+        w = 40
         h = 4
                                 #  H W Y X
         self.status = add_border(h, W, 0, 0)
@@ -82,7 +85,7 @@ class Engine:
             for line in self.side_buffer[::-1]:
                 if side_row >= log_rows:
                     break
-                self.side.addstr(side_row, 0, line, 0)
+                self.side.addstr(side_row, 0, line[:37], 0)
                 side_row += 1
 
             self.side.refresh()
@@ -119,7 +122,9 @@ class Engine:
                 continue
 
             cell = world.peek_cell(next_loc)
+            pubsub.pub("log", "Enter cell: %s" % cell)
             if cell.enterable_by(player, world, direction):
+                pubsub.pub("log", "Enterable")
                 pos = world.at(player)
                 val = world.pop_cell(pos)
 
