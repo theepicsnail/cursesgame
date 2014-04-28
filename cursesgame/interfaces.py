@@ -25,7 +25,7 @@ class Cell(object):
     def enterable_by(self, cell, world, direction):
         return self.passable
 
-    def on_entry(self, cell, world):
+    def before_entry(self, cell, world):
         pass
 
 class Inventory(object):

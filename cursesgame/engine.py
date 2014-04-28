@@ -128,7 +128,7 @@ class Engine:
                 pos = world.at(player)
                 val = world.pop_cell(pos)
 
+                cell.before_entry(player, world)
                 world.push_cell(next_loc, val)
-                cell.on_entry(player, world)
 
 

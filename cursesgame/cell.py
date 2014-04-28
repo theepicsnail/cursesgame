@@ -51,7 +51,7 @@ class Diamond(Cell):
     character = u'♦'
     color = color(curses.COLOR_CYAN) | curses.A_BOLD
 
-    def on_entry(self, cell, world):
+    def before_entry(self, cell, world):
         if isinstance(cell, Inventory):
             cell.add_item(world.pop_cell(*cell.get_pos()))
         return True
@@ -73,7 +73,7 @@ class Door(Cell):
         if isinstance(cell, Inventory):
             return cell.has_item(self.key)
 
-    def on_entry(self, cell, world):
+    def before_entry(self, cell, world):
         cell.rem_item(self.key)
         world.pop_cell(*cell.get_pos())
 
@@ -91,13 +91,11 @@ class PushableBlock(Cell):
     color = color(curses.COLOR_WHITE)
     def enterable_by(self, cell, world, direction):
         self.dest = world.relative_to(cell, direction)
+        self.dest = world.relative_to(self.dest, direction)
         if world.peek_cell(self.dest).enterable_by(self, world, direction):
             return True
 
-    def on_entry(self, cell, world):
-        pos = world.at(self)
-        player= world.pop_cell(pos)
-        world.pop_cell(pos)
-        world.push_cell(pos, player)
-        world.push_cell(self.dest, self)
+
+    def before_entry(self, cell, world):
+        world.push_cell(self.dest, world.pop_cell(world.at(self)))
 
