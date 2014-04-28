@@ -5,23 +5,54 @@ from world import World
 
 class Engine:
     def __init__(self):
+        self.side_buffer = []
         self._buildScreens()
         self._showIntro()
 
     def _buildScreens(self):
         self.screen = curses.newwin(0, 0, 0, 0)
 
-        # rows:4, cols:auto, top:0, left:0
-        self.status = self.screen.subwin(4, 0, 0, 0)
+        def add_border(H,W,Y,X):
+            screen = curses.newwin(H,W,Y,X)
+            screen.border(0,0,0,0,0,0,0,0)
+            screen.refresh()
+            return screen.derwin(H-2, W-2, 1, 1)
 
-        # rows:auto, cols: auto, top:4, left:0
-        self.window = self.screen.subwin(0, 0, 4, 0)
+        H,W = self.screen.getmaxyx()
+        #
+        #     w
+        # +---+---------------+
+        # |  S  t  a  t  u  s |
+        #h+---+---------------+
+        # |   |               |
+        # | S | window        |
+        # | i |               |
+        # | d |               |
+        # | e |               |
+        # |   |               |
+        # +---+---------------+
+        #
+        w = 20
+        h = 4
+                                #  H W Y X
+        self.status = add_border(h, W, 0, 0)
+        self.side = add_border(H-h, w, h, 0)
+        self.window = add_border(H-h, W-w, h, w)
+
         self.window.keypad(1)
 
     def _showIntro(self):
+        title = "Super awesome game title"
+        self.status.addstr(1,
+            (self.status.getmaxyx()[1] - len(title))/2, title,1)
+
         self.window.addstr(0, 0, "Press escape to quit")
         self.window.addstr(1, 0, "Use arrow keys to move")
-        self.window.addstr(3, 0, "Press any key to start")
+        self.window.addstr(2, 0, "Press any key to start")
+        self.status.refresh()
+
+    def log_message(self, log):
+        self.side_buffer.append(log)
 
     def mainloop(self):
         char = self.window.getch()
@@ -50,12 +81,23 @@ class Engine:
                     except Exception:pass
             self.window.addch(player_loc[0]-top, player_loc[1]-left, '@',
                     color(curses.COLOR_YELLOW) | curses.A_BOLD)
+
+            # draw side bar
+            side_row = 0
+            log_rows = self.side.getmaxyx()[0]
+            for line in self.side_buffer[::-1]:
+                if side_row >= log_rows:
+                    break
+                self.side.addstr(side_row, 0, line, 0)
+                side_row += 1
+
+            self.side.refresh()
+
             # draw status bar
             self.status.erase()
-            self.status.border(0, 0, 0, 0, 0, 0, 0, 0)
-            self.status.addstr(1, 1, "Pos: {}".format(player_loc))
+            self.status.addstr(0, 0, "Pos: {}".format(player_loc))
             for idx, (item, count) in enumerate(player.list_items()):
-                self.status.addstr(2, 1+4*idx, item.character.encode('utf-8'),
+                self.status.addstr(1, 4*idx, item.character.encode('utf-8'),
                         item.color)
                 self.status.addstr("{:<3}".format(count))
             self.status.refresh()
