@@ -13,6 +13,9 @@ class Cell(object):
     def __eq__(self, other):
         return type(self) == type(other)
 
+    def __str__(self):
+        return type(self).__name__
+
     def get_cell_char(self):
         return self.character
 
