@@ -62,8 +62,8 @@ class World(object):
         if getattr(obj, 'world_pos', None) is None:
             raise Exception("%s does not have a world_pos attribute", obj)
 
-        world_row = obj.world_pos[0] - offset[0]
-        world_col = obj.world_pos[1] - offset[1]
+        world_row = obj.world_pos[0] + offset[0]
+        world_col = obj.world_pos[1] + offset[1]
 
         return (world_row, world_col)
 
