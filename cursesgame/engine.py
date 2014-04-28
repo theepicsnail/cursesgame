@@ -7,6 +7,7 @@ class Engine:
     def __init__(self):
         self._buildScreens()
         self._showIntro()
+        self.player = Player()
 
     def _buildScreens(self):
         self.screen = curses.newwin(0, 0, 0, 0)
@@ -28,32 +29,30 @@ class Engine:
         left = 10
         top = 10
         height, width = self.window.getmaxyx()
-        player = Player(15, 15)
         import levels.level1
         world = levels.level1.Level1()
+        player = world.get_player()
+
         while char != 27:
             self.window.erase()
-            player_loc = player.get_pos()
-            top = max(0, player_loc[0] - height/2)#min(world.height, height)/2)
-            left = max(0, player_loc[1] - width/2)# min(world.width, width)/2)
-            #draw the screen
-            for row in xrange(top, top+height):
-                if row >= world.height:
-                    break
-                for col in xrange(left, left+width):
-                    if col >= world.width:
-                        break
+            for row in xrange(-height/2, height/2):
+                for col in xrange(-width/2, width/2):
                     try:
-                        cell = world.peek_cell(row, col)
-                        self.window.addstr(row-top, col-left,
+                        cell = world.peek_cell(
+                            world.relative_to(player, (row, col)))
+                        self.window.addstr(row - - height/2, col - - width/2,
+                            #row - -height/2, col - -width/2,
                             cell.character.encode('utf-8'), cell.color)
-                    except Exception:pass
-            self.window.addch(player_loc[0]-top, player_loc[1]-left, '@',
-                    color(curses.COLOR_YELLOW) | curses.A_BOLD)
+                    except: pass
+
+
+            #self.window.addch(player_loc[0]-top, player_loc[1]-left, '@',
+            #        color(curses.COLOR_YELLOW) | curses.A_BOLD)
+
             # draw status bar
             self.status.erase()
             self.status.border(0, 0, 0, 0, 0, 0, 0, 0)
-            self.status.addstr(1, 1, "Pos: {}".format(player_loc))
+            #self.status.addstr(1, 1, "Pos: {}".format(player_loc))
             for idx, (item, count) in enumerate(player.list_items()):
                 self.status.addstr(2, 1+4*idx, item.character.encode('utf-8'),
                         item.color)
@@ -72,7 +71,8 @@ class Engine:
                 direction = (0, 1)
             else:
                 continue
-            next_loc = map(sum,zip(player_loc, direction))
+            next_loc = world.relative_to(player, direction)
+            #map(sum, zip(player_loc, direction))
 
             # collision detection
             # out of bounds
@@ -82,9 +82,12 @@ class Engine:
                 next_loc[1] >= world.width:
                 continue
 
-            cell = world.peek_cell(next_loc[0], next_loc[1])
+            cell = world.peek_cell(next_loc)
             if cell.enterable_by(player, world, direction):
-                player.set_pos(*next_loc)
+                pos = world.at(player)
+                val = world.pop_cell(pos)
+
+                world.push_cell(next_loc, val)
                 cell.on_entry(player, world)
 
 
