@@ -122,9 +122,7 @@ class Engine:
                 continue
 
             cell = world.peek_cell(next_loc)
-            pubsub.pub("log", "Enter cell: %s" % cell)
             if cell.enterable_by(player, world, direction):
-                pubsub.pub("log", "Enterable")
                 pos = world.at(player)
                 val = world.pop_cell(pos)
 

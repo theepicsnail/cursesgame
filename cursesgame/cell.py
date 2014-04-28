@@ -2,6 +2,7 @@
 import curses
 from util import color
 from interfaces import *
+import pubsub
 
 class CellBuilder(Cell):
     def __eq__(self, other):
@@ -53,7 +54,10 @@ class Diamond(Cell):
 
     def before_entry(self, cell, world):
         if isinstance(cell, Inventory):
-            cell.add_item(world.pop_cell(*cell.get_pos()))
+            # remove self from the world
+            # Add it to cells's inventory
+            cell.add_item(world.pop_cell(world.at(self)))
+            pubsub.pub("log", "You pick up a key")
         return True
 
     def __unicode__(self):
@@ -71,11 +75,14 @@ class Door(Cell):
 
     def enterable_by(self, cell, world, direction):
         if isinstance(cell, Inventory):
-            return cell.has_item(self.key)
+            if cell.has_item(self.key):
+                return True
+            pubsub.pub("log", "The door is locked.")
 
     def before_entry(self, cell, world):
         cell.rem_item(self.key)
-        world.pop_cell(*cell.get_pos())
+        world.pop_cell(world.at(self))
+        pubsub.pub("log", "You unlock the door")
 
 class DiamondDoor(Door):
     key = Diamond()
