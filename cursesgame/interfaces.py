@@ -25,22 +25,6 @@ class Cell(object):
     def on_entry(self, cell, world):
         pass
 
-class Position(object):
-    """ Items that have position, at the moment it's only the player"""
-    def __init__(self, row=0, col=0):
-        super(Position,self).__init__()
-        self._row = row
-        self._col = col
-
-    def set_pos(self, row, col):
-        # For pubsub, this might push a couple messages
-        # exiting self.row/col, and entering new row/col
-        self._row = row
-        self._col = col
-
-    def get_pos(self):
-        return (self._row, self._col)
-
 class Inventory(object):
     def __init__(self):
         super(Inventory,self).__init__()

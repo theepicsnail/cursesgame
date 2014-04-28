@@ -52,7 +52,7 @@ class Diamond(Cell):
     color = color(curses.COLOR_CYAN) | curses.A_BOLD
 
     def on_entry(self, cell, world):
-        if isinstance(cell, Inventory) and isinstance(cell, Position):
+        if isinstance(cell, Inventory):
             cell.add_item(world.pop_cell(*cell.get_pos()))
         return True
 
