@@ -130,6 +130,10 @@ class Engine:
                 pos = world.at(player)
                 val = world.pop_cell(pos)
 
+                exposed_cell = world.peek_cell(pos)
+                if exposed_cell is not None:
+                    exposed_cell.after_exit(player, world)
+
                 cell.before_entry(player, world)
                 world.push_cell(next_loc, val)
 

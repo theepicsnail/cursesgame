@@ -28,6 +28,9 @@ class Cell(object):
     def before_entry(self, cell, world):
         pass
 
+    def after_exit(self, cell, world):
+        pass
+
 class Inventory(object):
     def __init__(self):
         super(Inventory,self).__init__()
