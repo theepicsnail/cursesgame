@@ -68,6 +68,6 @@ class Level1(World):
     "B": PushableBlock
     }).place(self, 20, 50)
         self.push_cell((self.height/2, self.width/2), self.player)
-
+        self.push_cell((self.height/2+3, self.width/2+3), Scroll())
 
 

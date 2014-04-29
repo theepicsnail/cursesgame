@@ -48,6 +48,15 @@ class Bridge(Cell):
     character = u'▓'
     color = color(curses.COLOR_YELLOW)
 
+class Scroll(Cell):
+    character = u'ʃ'
+    color = color(curses.COLOR_CYAN)
+
+    def before_entry(self, cell, world):
+        if isinstance(cell, Inventory):
+            cell.add_item(world.pop_cell(world.at(self)))
+            pubsub.pub("log", "You picked up a scroll")
+
 class Diamond(Cell):
     character = u'♦'
     color = color(curses.COLOR_CYAN) | curses.A_BOLD
