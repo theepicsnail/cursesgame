@@ -89,7 +89,6 @@ class Engine:
                 self.side.addstr(side_row, 0, line[:37], 0)
                 side_row += 1
 
-            self.side.refresh()
 
             # draw status bar
             self.status.erase()
@@ -97,7 +96,11 @@ class Engine:
                 self.status.addstr(1, 4*idx, item.character.encode('utf-8'),
                         item.color)
                 self.status.addstr("{:<3}".format(count))
-            self.status.refresh()
+
+            self.window.noutrefresh()
+            self.side.noutrefresh()
+            self.status.noutrefresh()
+            curses.doupdate()
 
             #handle input
             char = self.window.getch()
