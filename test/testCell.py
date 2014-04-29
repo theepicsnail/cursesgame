@@ -11,11 +11,12 @@ from cursesgame.cell import *
 
 class TestCollisions(unittest.TestCase):
     def setUp(self):
-        self.player = Player(0,0)
+        self.player = Player()
 
     def checkPassable(self, cls, expected):
         world = {(0, 0): cls()}
-        success = world[(0, 0)].on_collision(self.player, world)
+        #Entering from the left
+        success = world[(0, 0)].enterable_by(self.player, world, (0,1))
         self.assertTrue(success == expected)
 
     def testGrassIsPassable(self):
