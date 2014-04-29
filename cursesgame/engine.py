@@ -1,4 +1,5 @@
 import curses
+from menu import Menu
 from player import Player
 from util import color
 from world import World
@@ -66,8 +67,11 @@ class Engine:
         import levels.level1
         world = levels.level1.Level1()
         player = world.get_player()
-
-        while char != 27:
+        self.playing = True
+        def quit():
+            self.playing = False
+        menu = Menu([("Continue", lambda:0), ("Quit game", quit)], self.side)
+        while self.playing:
             self.window.erase()
             for row in xrange(-height/2, height/2):
                 for col in xrange(-width/2, width/2):
@@ -104,6 +108,7 @@ class Engine:
 
             #handle input
             char = self.window.getch()
+
             if char == 258: # Down
                 direction = (1, 0)
             elif char == 259: # Up
@@ -112,6 +117,9 @@ class Engine:
                 direction = (0, -1)
             elif char == 261: # right
                 direction = (0, 1)
+            elif char == 27: # escape
+                menu.display()
+                continue
             else:
                 continue
             next_loc = world.relative_to(player, direction)
