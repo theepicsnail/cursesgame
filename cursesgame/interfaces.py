@@ -53,3 +53,20 @@ class Inventory(object):
 
     def list_items(self):
         return self._inventory.iteritems()
+
+class HP(object):
+    def __init__(self):
+        super(HP, self).__init__()
+        self._health = 0
+
+    def set_hp(self, value):
+        self._health = value
+
+    def get_hp(self):
+        return self._health
+
+    def inc_hp(self, value):
+        self._health += value
+
+    def dec_hp(self, value):
+        self._health -= value

@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import curses
 from menu import Menu
 from player import Player
@@ -67,6 +68,8 @@ class Engine:
         import levels.level1
         world = levels.level1.Level1()
         player = world.get_player()
+        player.set_hp(100)
+
         self.playing = True
         def quit():
             self.playing = False
@@ -100,6 +103,9 @@ class Engine:
                 self.status.addstr(1, 4*idx, item.character.encode('utf-8'),
                         item.color)
                 self.status.addstr("{:<3}".format(count))
+            self.status.addstr(0, 0, str(world.at(world.player)) + "  ")
+            self.status.addstr(u"❤".encode('utf-8'), color(curses.COLOR_RED))
+            self.status.addstr(": "+ str(world.player.get_hp()))
 
             self.window.noutrefresh()
             self.side.noutrefresh()
