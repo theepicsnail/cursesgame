@@ -12,7 +12,11 @@ class Engine:
         self._buildScreens()
         self._showIntro()
         self.player = Player()
+
         pubsub.sub("log", self.log_message)
+        pubsub.sub("engine:updateStatus", self.updateStatus)
+        pubsub.sub("engine:updateSide", self.updateSide)
+        pubsub.sub("engine:updateWindow", self.updateWindow)
 
 
     def _buildScreens(self):
@@ -59,59 +63,67 @@ class Engine:
 
     def log_message(self, log):
         self.side_buffer.append(log)
+        pubsub.pub("engine:updateSide")
+
+    def updateStatus(self):
+        # draw status bar
+        self.status.erase()
+        for idx, (item, count) in enumerate(self.world.player.list_items()):
+            self.status.addstr(1, 4*idx, item.character.encode('utf-8'),
+                    item.color)
+            self.status.addstr("{:<3}".format(count))
+        self.status.addstr(0, 0, \
+            u"❤".encode('utf-8'), color(curses.COLOR_RED))
+        #str(self.world.at(self.world.get_player())) + "  ")
+#        self.status.addstr(
+        self.status.addstr(": "+ str(self.world.get_player().get_hp()))
+        self.status.refresh()
+
+    def updateSide(self):
+        # draw side bar
+        self.side.erase()
+        side_row = 0
+        log_rows = self.side.getmaxyx()[0]
+        for line in self.side_buffer[::-1]:
+            if side_row >= log_rows:
+                break
+            self.side.addstr(side_row, 0, line[:37], 0)
+            side_row += 1
+        self.side.refresh()
+
+    def updateWindow(self):
+        self.window.erase()
+        height, width = self.window.getmaxyx()
+        world = self.world
+        player = world.get_player()
+        for row in xrange(-height/2, height/2):
+            for col in xrange(-width/2, width/2):
+                try:
+                    cell = world.peek_cell(
+                        world.relative_to(player, (row, col)))
+                    self.window.addstr(row - - height/2, col - - width/2,
+                        #row - -height/2, col - -width/2,
+                        cell.character.encode('utf-8'), cell.color)
+                except Exception:pass
+
+        self.window.refresh()
+
 
     def mainloop(self):
-        char = self.window.getch()
-        left = 10
-        top = 10
-        height, width = self.window.getmaxyx()
+        char = 0
         import levels.level1
         world = levels.level1.Level1()
+        self.world = world
         player = world.get_player()
         player.set_hp(100)
+
+        pubsub.pub("engine:updateWindow")
 
         self.playing = True
         def quit():
             self.playing = False
         menu = Menu([("Continue", lambda:0), ("Quit game", quit)], self.side)
         while self.playing:
-            self.window.erase()
-            for row in xrange(-height/2, height/2):
-                for col in xrange(-width/2, width/2):
-                    try:
-                        cell = world.peek_cell(
-                            world.relative_to(player, (row, col)))
-                        self.window.addstr(row - - height/2, col - - width/2,
-                            #row - -height/2, col - -width/2,
-                            cell.character.encode('utf-8'), cell.color)
-                    except Exception:pass
-
-            # draw side bar
-            self.side.erase()
-            side_row = 0
-            log_rows = self.side.getmaxyx()[0]
-            for line in self.side_buffer[::-1]:
-                if side_row >= log_rows:
-                    break
-                self.side.addstr(side_row, 0, line[:37], 0)
-                side_row += 1
-
-
-            # draw status bar
-            self.status.erase()
-            for idx, (item, count) in enumerate(player.list_items()):
-                self.status.addstr(1, 4*idx, item.character.encode('utf-8'),
-                        item.color)
-                self.status.addstr("{:<3}".format(count))
-            self.status.addstr(0, 0, str(world.at(world.player)) + "  ")
-            self.status.addstr(u"❤".encode('utf-8'), color(curses.COLOR_RED))
-            self.status.addstr(": "+ str(world.player.get_hp()))
-
-            self.window.noutrefresh()
-            self.side.noutrefresh()
-            self.status.noutrefresh()
-            curses.doupdate()
-
             #handle input
             char = self.window.getch()
 
@@ -150,5 +162,5 @@ class Engine:
 
                 cell.before_entry(player, world)
                 world.push_cell(next_loc, val)
-
+                pubsub.pub("engine:updateWindow")
 
