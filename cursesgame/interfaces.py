@@ -66,7 +66,7 @@ class HP(object):
         return self._health
 
     def inc_hp(self, value):
-        self._health += value
+        self.set_hp(self.get_hp() + value)
 
     def dec_hp(self, value):
-        self._health -= value
+        self.set_hp(self.get_hp() - value)
