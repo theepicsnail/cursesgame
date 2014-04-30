@@ -1,5 +1,5 @@
 from cell import *
-from world import World
+import world
 from player import Player
 class Template:
     def __init__(self, data, mapping):
@@ -23,7 +23,7 @@ class Template:
                         world.push_cell((row + dr, col + dc), cell)
 
 
-class Level1(World):
+class World(world.World):
     def create(self):
         self.width =  200
         self.height = 100
