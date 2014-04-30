@@ -1,0 +1,16 @@
+language: python
+python:
+  - "2.7"
+script:
+  - python test
+notifications:
+  email:
+    recipients:
+      - theepicsnail@gmail.com
+  irc:
+    channels:
+      - "udderweb.com:7777#test"
+    template:
+      - "%{author}, %{message}. %{compare_url}"
+      - "Build details: %{build_url}"
+
