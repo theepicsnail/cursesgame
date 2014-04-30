@@ -3,8 +3,9 @@ import curses
 from menu import Menu
 from player import Player
 from util import color
-from world import World
 import pubsub
+import flags
+import sys
 
 class Engine:
     def __init__(self):
@@ -74,8 +75,7 @@ class Engine:
             self.status.addstr("{:<3}".format(count))
         self.status.addstr(0, 0, \
             u"❤".encode('utf-8'), color(curses.COLOR_RED))
-        #str(self.world.at(self.world.get_player())) + "  ")
-#        self.status.addstr(
+
         self.status.addstr(": "+ str(self.world.get_player().get_hp()))
         self.status.refresh()
 
@@ -108,12 +108,17 @@ class Engine:
 
         self.window.refresh()
 
+    def loadWorld(self):
+        import flags
+        level = flags.get("level")
+        return __import__("levels." + level, fromlist=[level]).World()
 
     def mainloop(self):
         char = 0
-        import levels.level1
-        world = levels.level1.Level1()
+
+        world = self.loadWorld()
         self.world = world
+
         player = world.get_player()
         player.set_hp(100)
 
