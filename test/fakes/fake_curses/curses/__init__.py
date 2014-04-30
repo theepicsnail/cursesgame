@@ -13,6 +13,7 @@ class __Attribute:
         return other + (self.val,)
 
 A_BOLD = __Attribute('B')
+A_REVERSE = __Attribute('R')
 
 def initscr():
     pass
