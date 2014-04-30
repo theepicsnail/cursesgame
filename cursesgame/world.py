@@ -16,7 +16,8 @@ class World(object):
         self.create()
 
     def create(self):
-        raise NotImplementedError()
+        """ This should be overwritten by subclasses to create their world"""
+        pass
 
     def push_cell(self, pos, val):
         if getattr(val, 'world_pos', None) is not None:
@@ -68,4 +69,59 @@ class World(object):
         world_col = obj.world_pos[1] + offset[1]
 
         return (world_row, world_col)
+
+    # Move cells around the map
+    def move_north(self, cell, count=1):
+        moved = self._move_cell(cell, (-1, 0))
+        if moved and count > 1:
+            self.move_north(cell, count-1)
+        return moved
+
+    def move_south(self, cell, count=1):
+        moved = self._move_cell(cell, (1, 0))
+        if moved and count > 1:
+            self.move_south(cell, count-1)
+        return moved
+
+    def move_west(self, cell, count=1):
+        moved = self._move_cell(cell, (0, -1))
+        if moved and count > 1:
+            self.move_west(cell, count-1)
+        return moved
+
+    def move_east(self, cell, count=1):
+        moved =  self._move_cell(cell, (0, 1))
+        if moved and count > 1:
+            self.move_east(cell, count-1)
+        return moved
+
+    def _move_cell(self, cell, direction):
+        """Attempt to move a cell in a given direction
+        If it can't move that way, this method is a noop
+
+        Returns whether the world has changed
+        """
+        next_loc = self.relative_to(cell, direction)
+        neighbor = self.peek_cell(next_loc)
+
+        if neighbor is None: # Off map
+            return False
+
+        if neighbor.enterable_by(cell, self, direction):
+            # Hooray, we can move <cell> <direction>!
+            old_loc = self.at(cell)
+            # The cell we remove should be us
+            assert(self.pop_cell(old_loc) == cell)
+
+            exposed_cell = self.peek_cell(old_loc)
+            if exposed_cell is not None:
+                exposed_cell.after_exit(cell, self)
+
+            neighbor.before_entry(cell, self)
+            self.push_cell(next_loc, cell)
+            return True
+
+        return False
+
+
 

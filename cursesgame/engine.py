@@ -126,41 +126,17 @@ class Engine:
         while self.playing:
             #handle input
             char = self.window.getch()
-
+            update = False
             if char == 258: # Down
-                direction = (1, 0)
+                update = world.move_south(player)
             elif char == 259: # Up
-                direction = (-1, 0)
+                update = world.move_north(player)
             elif char == 260: # left
-                direction = (0, -1)
+                update = world.move_west(player)
             elif char == 261: # right
-                direction = (0, 1)
+                update = world.move_east(player)
             elif char == 27: # escape
                 menu.display()
-                continue
-            else:
-                continue
-            next_loc = world.relative_to(player, direction)
-            #map(sum, zip(player_loc, direction))
 
-            # collision detection
-            # out of bounds
-            if next_loc[0] < 0 or\
-                next_loc[1] < 0 or\
-                next_loc[0] >= world.height or\
-                next_loc[1] >= world.width:
-                continue
-
-            cell = world.peek_cell(next_loc)
-            if cell.enterable_by(player, world, direction):
-                pos = world.at(player)
-                val = world.pop_cell(pos)
-
-                exposed_cell = world.peek_cell(pos)
-                if exposed_cell is not None:
-                    exposed_cell.after_exit(player, world)
-
-                cell.before_entry(player, world)
-                world.push_cell(next_loc, val)
+            if update:
                 pubsub.pub("engine:updateWindow")
-
