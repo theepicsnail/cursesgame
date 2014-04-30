@@ -47,6 +47,30 @@ class TestCollisions(unittest.TestCase):
         self.assertEqual((0, 1), self.world.at(self.world.get_player()))
         self.assertEqual((0, 2), self.world.at(block))
 
+    def testPushingMultipleBlocks(self):
+        """ [Player] [Block]  [Space] [Block] [Space]
+            to
+            [Space]  [Player] [Block] [Block] [Space]
+            Moving east twice, should first move the block
+            then the block should prevent the player from moving
+            any more east. (i.e. the player can not move multiple blocks)
+        """
+        block = PushableBlock()
+        block2 = PushableBlock()
+        self.world = buildWorld([None, block, Grass(), block2, Grass()])
+
+        self.world.move_east(self.world.get_player())
+
+        self.assertEqual((0, 1), self.world.at(self.world.get_player()))
+        self.assertEqual((0, 2), self.world.at(block))
+        self.assertEqual((0, 3), self.world.at(block2))
+
+        self.world.move_east(self.world.get_player())
+
+        self.assertEqual((0, 1), self.world.at(self.world.get_player()))
+        self.assertEqual((0, 2), self.world.at(block))
+        self.assertEqual((0, 3), self.world.at(block2))
+
 
 
 if __name__ == '__main__':

@@ -2,6 +2,7 @@
 import curses
 from util import color
 from interfaces import *
+from player import Player
 import pubsub
 
 class CellBuilder(Cell):
@@ -106,6 +107,9 @@ class PushableBlock(Cell):
     character = 'X'
     color = color(curses.COLOR_WHITE)
     def enterable_by(self, cell, world, direction):
+        if not isinstance(cell, Player):
+            return False
+
         self.dest = world.relative_to(cell, direction)
         self.dest = world.relative_to(self.dest, direction)
         if world.peek_cell(self.dest).enterable_by(self, world, direction):
